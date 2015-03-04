@@ -7,15 +7,17 @@
 path="/local/mcampana/devel/hpp"
 testPath="/local/mcampana/devel/hpp/src/hpp-runs/scripts"
 
-for i in `seq 1 10`
+for i in `seq 1 2`
     do
     echo "Loop begining: "$i
     # In first terminal : server
     xterm -e hppcorbaserver &
+    #xterm -e hpp-wholebody-step-server &
     sleep 2s
     # In second terminal : python script
-    xterm -hold -e python potential_test.py $i /local/mcampana/devel/hpp/src/hpp-runs/scripts/ &
-    sleep 25s # finish python script
+    xterm -e python puzzle_test.py $i /local/mcampana/devel/hpp/src/hpp-runs/scripts/
+    #wait until Python script is finished
+    echo "Loop done"
     killall xterm
     sleep 2s
 done # endFor
@@ -26,10 +28,8 @@ done # endFor
 # List of available Python scripts :
 # robot_2d_test
 # potential_test
-# puzzle
+# puzzle_test
 # ur2_test
-# ur5_test TODO
+# ur5_test
 # tutorial_2
-# gravity TODO
-# test-rrt2 TODO
-# room TODO
+# room_hand

@@ -53,6 +53,7 @@ begin=time.time()
 ps.optimizePath(7)
 end=time.time()
 optimTime = end - begin
+print "optim finished"
 
 # Write important results #
 f = open('results.txt','a')
@@ -62,6 +63,7 @@ f.write('Duration of non-optimized path: '+str(ps.pathLength(0))+'\n')
 f.write('Duration of optimized path: '+str(ps.pathLength(1))+'\n')
 f.write('Solving duration: '+str(0)+'\n') # initial path given by hand
 f.write('Optim duration: '+str(optimTime)+'\n')
+f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
 f.close()
 
 

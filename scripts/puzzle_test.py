@@ -24,7 +24,8 @@ ps = ProblemSolver (robot)
 cl = robot.client
 cl.obstacle.loadObstacleModel('puzzle_description','decor_very_easy','')
 
-q1 = [0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0]; q2 = [0.0, 0.0, -0.8, 1.0, 0.0, 0.0, 0.0]
+#q1 = [0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0]; q2 = [0.0, 0.0, -0.8, 1.0, 0.0, 0.0, 0.0]
+q1 = [0, 0, 0.8, 1, 0, 1, 0, 1, 0]; q2 = [0, 0, -0.8, 1, 0, 1, 0, 1, 0]
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 
@@ -41,10 +42,11 @@ optimTime = end - begin
 # Write important results #
 f = open('results.txt','a')
 f.write('Try number: '+str(nPlot)+'\n')
-f.write('Number of nodes: '+str(len(ps.nodes ()))+'\n')
 f.write('Duration of non-optimized path: '+str(ps.pathLength(0))+'\n')
 f.write('Duration of optimized path: '+str(ps.pathLength(1))+'\n')
 f.write('Solving duration: '+str(solveTime)+'\n')
 f.write('Optim duration: '+str(optimTime)+'\n')
+f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
+f.write('Nb iterations: '+str(cl.problem.getIterationNumber ())+'\n')
 f.close()
 

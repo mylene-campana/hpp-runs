@@ -18,6 +18,7 @@ arg_two = str(sys.argv[2])
 print 'Arguments parsed: '+arg_one + ', '+arg_two
 
 robot = Robot ('ur5')
+ps =ProblemSolver (robot)
 cl = robot.client
 #robot.setRootJointPosition([0,0,1.2,1,0,0,0]) # only in HPP, not displayed
 
@@ -44,10 +45,11 @@ optimTime = end - begin
 # Write important results #
 f = open('results.txt','a')
 f.write('Try number: '+str(nPlot)+'\n')
-f.write('Number of nodes: '+str(len(ps.nodes ()))+'\n')
 f.write('Duration of non-optimized path: '+str(ps.pathLength(0))+'\n')
 f.write('Duration of optimized path: '+str(ps.pathLength(1))+'\n')
 f.write('Solving duration: '+str(solveTime)+'\n')
 f.write('Optim duration: '+str(optimTime)+'\n')
+#f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
+f.write('Nb iterations: '+str(cl.problem.getIterationNumber ())+'\n')
 f.close()
 

@@ -15,21 +15,23 @@ from __future__ import division
 import numpy as np
 import math
 
-runFile = "/local/mcampana/devel/hpp/src/hpp-runs/scripts"
+runFile = "/local/mcampana/devel/hpp/src/hpp-runs/scripts/"
 fileName = "results.txt"
 
 # --------------------------------------------------------------------#
 
 def main ():
-    prefixNodes = "Number of nodes: "
+    #prefixNodes = "Number of nodes: "
     prefixNonOp = "Duration of non-optimized path: "
     prefixOp = "Duration of optimized path: "
     prefixSolv = "Solving duration: "
     prefixOptim = "Optim duration: "
+    prefixNbWaypoints = "Nb waypoints: "
+    prefixNbIter = "Nb iterations: "
     
-    print "Number of new nodes: "
-    vector = parseRun (prefixNodes); print vector; #avNew = average (vector)
-    varNew = variance (vector); print "deviation: "+str(math.sqrt(varNew))+"\n"
+    #print "Number of new nodes: "
+    #vector = parseRun (prefixNodes); print vector; #avNew = average (vector)
+    #varNew = variance (vector); print "deviation: "+str(math.sqrt(varNew))+"\n"
     
     print "Non-optim-length duration parsing: "
     vector = parseRun (prefixNonOp); print vector; #avNonOp = average (vector)
@@ -39,12 +41,20 @@ def main ():
     vector = parseRun (prefixOp); print vector; #avOp = average (vector)
     varOp = variance (vector); print "deviation: "+str(math.sqrt(varOp))+"\n"
     
-    print "Solve duration parsing: "
-    vector = parseRun (prefixSolv); print vector; #avSolv = average (vector)
-    varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
+    #print "Solve duration parsing: "
+    #vector = parseRun (prefixSolv); print vector; #avSolv = average (vector)
+    #varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
     
     print "Optim duration parsing: "
     vector = parseRun (prefixOptim); print vector; #avSolv = average (vector)
+    varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
+    
+    #print "Nb waypoints: "
+    #vector = parseRun (prefixNbWaypoints); print vector; #avSolv = average (vector)
+    #varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
+    
+    print "Nb iterations: "
+    vector = parseRun (prefixNbIter); print vector; #avSolv = average (vector)
     varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
     
 # --------------------------------------------------------------------#

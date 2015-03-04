@@ -47,9 +47,11 @@ optimTime = end - begin
 # Write important results #
 f = open('results.txt','a')
 f.write('Try number: '+str(nPlot)+'\n')
-f.write('Number of nodes: '+str(len(ps.nodes ()))+'\n')
 f.write('Duration of non-optimized path: '+str(ps.pathLength(0))+'\n')
 f.write('Duration of optimized path: '+str(ps.pathLength(1))+'\n')
 f.write('Solving duration: '+str(solveTime)+'\n')
 f.write('Optim duration: '+str(optimTime)+'\n')
+f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
+f.write('Nb iterations: '+str(cl.problem.getIterationNumber ())+'\n')
 f.close()
+
