@@ -7,8 +7,6 @@
 """
 from parseRuns import main
 main()
-from parseRuns import variance
-variance([0, 2, 2,  2, 0])
 """
 
 from __future__ import division
@@ -22,40 +20,27 @@ fileName = "results.txt"
 
 def main ():
     #prefixNodes = "Number of nodes: "
-    prefixNonOp = "Duration of non-optimized path: "
-    prefixOp = "Duration of optimized path: "
-    prefixSolv = "Solving duration: "
-    prefixOptim = "Optim duration: "
+    prefixNonOp = "Cost of non-optimized path: "
+    prefixOpGB = "Cost of optimized path (GB): "
+    prefixOpRS = "Cost of optimized path (RS): "
+    prefixSolv = "Solving comptutation time: "
+    prefixOptimGB = "Optim comptutation time (BG): "
+    prefixOptimRS = "Optim comptutation time (RS): "
     prefixNbWaypoints = "Nb waypoints: "
-    prefixNbIter = "Nb iterations: "
+    prefixNbIterGB = "Nb iterations (GB): "
+    prefixNbIterRS = "Nb iterations (RS): "
     
-    #print "Number of new nodes: "
-    #vector = parseRun (prefixNodes); print vector; #avNew = average (vector)
-    #varNew = variance (vector); print "deviation: "+str(math.sqrt(varNew))+"\n"
-    
-    print "Non-optim-length duration parsing: "
-    vector = parseRun (prefixNonOp); print vector; #avNonOp = average (vector)
-    varNonOp = variance (vector); print "deviation: "+str(math.sqrt(varNonOp))+"\n"
-    
-    print "Optim-length duration parsing: "
-    vector = parseRun (prefixOp); print vector; #avOp = average (vector)
-    varOp = variance (vector); print "deviation: "+str(math.sqrt(varOp))+"\n"
-    
-    #print "Solve duration parsing: "
-    #vector = parseRun (prefixSolv); print vector; #avSolv = average (vector)
-    #varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
-    
-    print "Optim duration parsing: "
-    vector = parseRun (prefixOptim); print vector; #avSolv = average (vector)
-    varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
-    
-    #print "Nb waypoints: "
-    #vector = parseRun (prefixNbWaypoints); print vector; #avSolv = average (vector)
-    #varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
-    
-    print "Nb iterations: "
-    vector = parseRun (prefixNbIter); print vector; #avSolv = average (vector)
-    varSolv = variance (vector); print "deviation: "+str(math.sqrt(varSolv))+"\n"
+    ## Display data:
+    #print "Number of new nodes: "; compute (prefixNodes)
+    print "Cost of non-optimized path parsing: "; compute (prefixNonOp)
+    print "Cost of optimized path (GB) parsing: "; compute (prefixOpGB)
+    print "Cost of optimized path (RS) parsing: "; compute (prefixOpRS)
+    print "Solving comptutation time parsing: "; compute (prefixSolv)
+    print "Optim comptutation time (BG) parsing: "; compute (prefixOptimGB)
+    print "Optim comptutation time (RS) parsing: "; compute (prefixOptimRS)
+    #print "Nb waypoints parsing: "; compute (prefixNonOp)
+    print "Nb iterations (GB) parsing: "; compute (prefixNbIterGB)
+    print "Nb iterations (RS) parsing: "; compute (prefixNbIterRS)
     
 # --------------------------------------------------------------------#
 
@@ -79,7 +64,6 @@ def parseRun (prefix):
 # Compute average of a vector
 def average (vector):
     av=0
-    print "length: " + str(len(vector))
     for elem in vector:
         av += elem
     av = av/len(vector)
@@ -96,7 +80,16 @@ def variance (vector):
         var += elem**2
     var = var/len(vector)
     var = var - av**2
-    #print "variance: "+str(var)
+    if var<0:
+        print "Variance is <0 because of rounding errors: "+str(var)
+        var=0
     return var
 
 # --------------------------------------------------------------------#
+
+# Compute average and SD for the given inString indicating a vector of floats in 'results.txt'
+def compute (inString):
+    vector = parseRun (inString)
+    #print vector
+    #print "length: " + str(len(vector))
+    print "SD: "+str(math.sqrt(variance (vector)))+"\n"

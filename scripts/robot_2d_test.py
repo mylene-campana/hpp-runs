@@ -8,16 +8,6 @@ from hpp.corbaserver import Client
 import time
 import sys
 
-# Parse arguments : number and path #
-print 'Argument List: ', str(sys.argv)
-if len(sys.argv) != 3: # Warning: fileName is counted by default
-  sys.exit("Not enough args")
-arg_one = str(sys.argv[1])
-nPlot=int(sys.argv[1]) 
-arg_two = str(sys.argv[2])
-print 'Arguments parsed: '+arg_one + ', '+arg_two
-
-
 robot = Robot ('robot_2d')
 ps = ProblemSolver (robot)
 cl = robot.client
@@ -49,21 +39,40 @@ cl.problem.resetGoalConfigs ()
 q1 = [-2, 0]; q2 = [2, 0]
 cl.problem.setInitialConfig (q1); cl.problem.addGoalConfig (q2); cl.problem.solve ()
 
-begin=time.time()
-ps.optimizePath(7)
-end=time.time()
-optimTime = end - begin
-print "optim finished"
-
-# Write important results #
+imax=30
 f = open('results.txt','a')
-f.write('Try number: '+str(nPlot)+'\n')
-f.write('Number of nodes: '+str(len(ps.nodes ()))+'\n')
-f.write('Duration of non-optimized path: '+str(ps.pathLength(0))+'\n')
-f.write('Duration of optimized path: '+str(ps.pathLength(1))+'\n')
-f.write('Solving duration: '+str(0)+'\n') # initial path given by hand
-f.write('Optim duration: '+str(optimTime)+'\n')
-f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
-f.close()
 
+for i in range(0, imax):
+    ps.selectPathOptimizer('GradientBased')
+    begin=time.time()
+    ps.optimizePath(7)
+    end=time.time()
+    optimTimeGB = end - begin
+    iterNbGB = cl.problem.getIterationNumber ()
+    
+    ps.selectPathOptimizer('RandomShortcut')
+    begin=time.time()
+    ps.optimizePath(7)
+    end=time.time()
+    optimTimeRS = end - begin
+    iterNbRS = cl.problem.getIterationNumber ()
+    
+    # Write important results #
+    f.write('Try number: '+str(i+1)+'\n')
+    f.write('Cost of non-optimized path: '+str(ps.pathLength(7))+'\n')
+    if i==0:
+        f.write('Cost of optimized path (GB): '+str(ps.pathLength(7+1))+'\n')
+        f.write('Cost of optimized path (RS): '+str(ps.pathLength(7+2))+'\n')
+    else:
+        f.write('Cost of optimized path (GB): '+str(ps.pathLength(7+i*2+1))+'\n')
+        f.write('Cost of optimized path (RS): '+str(ps.pathLength(7+i*2+2))+'\n')
+    
+    f.write('Solving comptutation time: '+str(0)+'\n')
+    f.write('Optim comptutation time (BG): '+str(optimTimeGB)+'\n')
+    f.write('Optim comptutation time (RS): '+str(optimTimeRS)+'\n')
+    f.write('Nb waypoints: '+str(len(ps.getWaypoints (0)))+'\n')
+    f.write('Nb iterations (GB): '+str(iterNbGB)+'\n')
+    f.write('Nb iterations (RS): '+str(iterNbRS)+'\n')
+
+f.close()
 
