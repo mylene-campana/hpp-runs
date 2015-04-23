@@ -1,8 +1,7 @@
 # hpp-runs
-Launch several HPP scripts and compute interesting data in one command
 
-The Shell script will launch the corba server and then the Python script (chosen in an indicated list).
+After launch a hpp-corbaserver, each Python script of this package can be executed to run "imax" number of times the problem. Each time, path is planned and then optimize by a Gradient Based method or a Random Shortcut.
 
-Results such as computation times, solution lengths are written in a text file.
+Results such as computation times, solution costs are written in a 'results.txt' text file.
 
-This file can be read with the parser in order to compute means and deviations.
+This file can be read with the parser in order to compute averages and SDs.
