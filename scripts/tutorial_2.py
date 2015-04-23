@@ -1,6 +1,5 @@
 #/usr/bin/env python
 
-import time
 import sys
 from hpp.corbaserver import ProblemSolver
 from hpp.corbaserver.pr2 import Robot
@@ -33,23 +32,17 @@ imax=50
 f = open('results.txt','a')
 
 for i in range(0, imax):
-    begin=time.time()
-    ps.solve ()
-    end=time.time()
-    solveTime = end - begin
+    solveTime = ps.solve ()
     
-    ps.selectPathOptimizer('GradientBased')
-    begin=time.time()
+    ps.addPathOptimizer('GradientBased')
     ps.optimizePath(i*3)
-    end=time.time()
-    optimTimeGB = end - begin
+    optimTimeGB = cl.problem.getComputationTime ()
     iterNbGB = cl.problem.getIterationNumber ()
     
-    ps.selectPathOptimizer('RandomShortcut')
-    begin=time.time()
-    ps.optimizePath(i*3)
-    end=time.time()
-    optimTimeRS = end - begin
+    ps.clearPathOptimizers()
+    ps.addPathOptimizer('RandomShortcut')
+    cl.problem.optimizePathLength(i*3, ps.pathLength(i*3+1))
+    optimTimeRS = cl.problem.getComputationTime ()
     iterNbRS = cl.problem.getIterationNumber ()
     
     # Write important results #

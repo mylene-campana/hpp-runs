@@ -5,7 +5,6 @@
 from hpp.corbaserver.robot_2d import Robot
 from hpp.corbaserver import ProblemSolver
 from hpp.corbaserver import Client
-import time
 import sys
 
 robot = Robot ('robot_2d')
@@ -39,33 +38,28 @@ cl.problem.resetGoalConfigs ()
 q1 = [-2, 0]; q2 = [2, 0]
 cl.problem.setInitialConfig (q1); cl.problem.addGoalConfig (q2); cl.problem.solve ()
 
-imax=30
+imax=50
 f = open('results.txt','a')
 
 for i in range(0, imax):
-    ps.selectPathOptimizer('GradientBased')
-    begin=time.time()
+    ps.addPathOptimizer('GradientBased')
     ps.optimizePath(7)
-    end=time.time()
-    optimTimeGB = end - begin
+    optimTimeGB = cl.problem.getComputationTime ()
     iterNbGB = cl.problem.getIterationNumber ()
     
-    ps.selectPathOptimizer('RandomShortcut')
-    begin=time.time()
-    ps.optimizePath(7)
-    end=time.time()
-    optimTimeRS = end - begin
+    ps.clearPathOptimizers()
+    ps.addPathOptimizer('RandomShortcut')
+    #ps.optimizePath(7)
+    cl.problem.optimizePathLength(7, ps.pathLength(7+i*2+1))
+    optimTimeRS = cl.problem.getComputationTime ()
     iterNbRS = cl.problem.getIterationNumber ()
     
     # Write important results #
     f.write('Try number: '+str(i+1)+'\n')
     f.write('Cost of non-optimized path: '+str(ps.pathLength(7))+'\n')
-    if i==0:
-        f.write('Cost of optimized path (GB): '+str(ps.pathLength(7+1))+'\n')
-        f.write('Cost of optimized path (RS): '+str(ps.pathLength(7+2))+'\n')
-    else:
-        f.write('Cost of optimized path (GB): '+str(ps.pathLength(7+i*2+1))+'\n')
-        f.write('Cost of optimized path (RS): '+str(ps.pathLength(7+i*2+2))+'\n')
+
+    f.write('Cost of optimized path (GB): '+str(ps.pathLength(7+i*2+1))+'\n')
+    f.write('Cost of optimized path (RS): '+str(ps.pathLength(7+i*2+2))+'\n')
     
     f.write('Solving comptutation time: '+str(0)+'\n')
     f.write('Optim comptutation time (BG): '+str(optimTimeGB)+'\n')

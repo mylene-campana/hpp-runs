@@ -31,14 +31,15 @@ for i in range(0, imax):
     end=time.time()
     solveTime = end - begin
     
-    ps.selectPathOptimizer('GradientBased')
+    ps.addPathOptimizer('GradientBased')
     begin=time.time()
     ps.optimizePath(i*3)
     end=time.time()
     optimTimeGB = end - begin
     iterNbGB = cl.problem.getIterationNumber ()
     
-    ps.selectPathOptimizer('RandomShortcut')
+    ps.clearPathOptimizers()
+    ps.addPathOptimizer('RandomShortcut')
     begin=time.time()
     ps.optimizePath(i*3)
     end=time.time()
