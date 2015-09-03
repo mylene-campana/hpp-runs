@@ -19,28 +19,24 @@ fileName = "results.txt"
 # --------------------------------------------------------------------#
 
 def main ():
-    #prefixNodes = "Number of nodes: "
     prefixNonOp = "Cost of non-optimized path: "
     prefixOpGB = "Cost of optimized path (GB): "
     prefixOpRS = "Cost of optimized path (RS): "
-    prefixSolv = "Solving comptutation time: "
-    prefixOptimGB = "Optim comptutation time (BG): "
+    prefixOptimGB = "Optim comptutation time (GB): "
     prefixOptimRS = "Optim comptutation time (RS): "
-    prefixNbWaypoints = "Nb waypoints: "
-    prefixNbIterGB = "Nb iterations (GB): "
-    prefixNbIterRS = "Nb iterations (RS): "
+    prefixBase = "base motion distance: "
+    prefixBaseRS = "base motion distance (RS): "
+    prefixBaseGB = "base motion distance (GB): "
     
     ## Display data:
-    #print "Number of new nodes: "; compute (prefixNodes)
     print "Cost of non-optimized path parsing: "; compute (prefixNonOp)
-    print "Cost of optimized path (GB) parsing: "; compute (prefixOpGB)
-    print "Cost of optimized path (RS) parsing: "; compute (prefixOpRS)
-    print "Solving comptutation time parsing: "; compute (prefixSolv)
-    print "Optim comptutation time (BG) parsing: "; compute (prefixOptimGB)
-    print "Optim comptutation time (RS) parsing: "; compute (prefixOptimRS)
-    #print "Nb waypoints parsing: "; compute (prefixNonOp)
-    print "Nb iterations (GB) parsing: "; compute (prefixNbIterGB)
-    print "Nb iterations (RS) parsing: "; compute (prefixNbIterRS)
+    print "Cost of optimized path (GB): "; compute (prefixOpGB)
+    print "Cost of optimized path (RS): "; compute (prefixOpRS)
+    print "Optim comptutation time (GB): "; compute (prefixOptimGB)
+    print "Optim comptutation time (RS): "; compute (prefixOptimRS)
+    #print "base motion distance: "; compute (prefixBase)
+    #print "base motion distance (RS): "; compute (prefixBaseRS)
+    #print "base motion distance (GB): "; compute (prefixBaseGB)
     
 # --------------------------------------------------------------------#
 
@@ -93,3 +89,16 @@ def compute (inString):
     #print vector
     #print "length: " + str(len(vector))
     print "SD: "+str(math.sqrt(variance (vector)))+"\n"
+
+# --------------------------------------------------------------------#
+
+# Compute distance of the base motion (x-y) along a path
+# wps: is the list of waypoints of the path
+def computeBaseMotion (wps):
+    dist = 0
+    for i in range(0,len(wps)-1):
+        wpi = wps [i]
+        wpii = wps [i+1]
+        dist += math.sqrt( (wpii [0] - wpi [0])**2 +  (wpii [1] - wpi [1])**2  )
+        print dist
+    return dist
