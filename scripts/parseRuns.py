@@ -22,21 +22,28 @@ def main ():
     prefixNonOp = "Cost of non-optimized path: "
     prefixOpGB = "Cost of optimized path (GB): "
     prefixOpRS = "Cost of optimized path (RS): "
+    prefixOpPRS = "Cost of optimized path (PRS): "
     prefixOptimGB = "Optim comptutation time (GB): "
     prefixOptimRS = "Optim comptutation time (RS): "
+    prefixOptimPRS = "Optim comptutation time (PRS): "
     prefixBase = "base motion distance: "
     prefixBaseRS = "base motion distance (RS): "
+    prefixBasePRS = "base motion distance (PRS): "
     prefixBaseGB = "base motion distance (GB): "
     
     ## Display data:
     print "Cost of non-optimized path parsing: "; compute (prefixNonOp)
     print "Cost of optimized path (GB): "; compute (prefixOpGB)
     print "Cost of optimized path (RS): "; compute (prefixOpRS)
+    print "Cost of optimized path (PRS): "; compute (prefixOpPRS)
     print "Optim comptutation time (GB): "; compute (prefixOptimGB)
     print "Optim comptutation time (RS): "; compute (prefixOptimRS)
+    print "Optim comptutation time (PRS): "; compute (prefixOptimPRS)
     #print "base motion distance: "; compute (prefixBase)
-    #print "base motion distance (RS): "; compute (prefixBaseRS)
     #print "base motion distance (GB): "; compute (prefixBaseGB)
+    #print "base motion distance (RS): "; compute (prefixBaseRS)
+    #print "base motion distance (PRS): "; compute (prefixBasePRS)
+    
     
 # --------------------------------------------------------------------#
 
@@ -100,5 +107,4 @@ def computeBaseMotion (wps):
         wpi = wps [i]
         wpii = wps [i+1]
         dist += math.sqrt( (wpii [0] - wpi [0])**2 +  (wpii [1] - wpi [1])**2  )
-        print dist
     return dist

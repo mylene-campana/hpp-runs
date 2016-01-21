@@ -30,22 +30,31 @@ f = open('results.txt','a')
 for i in range(0, imax):
     print i
     ps.solve ()
-    initialPathLength = ps.pathLength (ps.numberPaths()-1)
+    initialPathNumber = ps.numberPaths()-1
+    initialPathLength = ps.pathLength (initialPathNumber)
     print "solve finished"
     print str(initialPathLength)
     
     ps.addPathOptimizer('RandomShortcut')
-    optimTimeRS = cl.problem.optimizePath(ps.numberPaths()-1)
+    optimTimeRS = cl.problem.optimizePath(initialPathNumber)
     pathLengthRS = ps.pathLength (ps.numberPaths()-1)
     print "RS finished"
     print str(optimTimeRS)
     print str(pathLengthRS)
     
     ps.clearPathOptimizers()
+    ps.addPathOptimizer('PartialShortcut')
+    optimTimePRS = cl.problem.optimizePath(initialPathNumber)
+    pathLengthPRS = ps.pathLength (ps.numberPaths()-1)
+    print "PRS finished"
+    print str(optimTimePRS)
+    print str(pathLengthPRS)
+    
+    ps.clearPathOptimizers()
     ps.addPathOptimizer('GradientBased')
-    optimTimeGB = ps.optimizePath(ps.numberPaths()-2)
-    pathLengthGB = ps.pathLength (ps.numberPaths()-1)
+    optimTimeGB = ps.optimizePath(initialPathNumber)
     print "GB finished"
+    pathLengthGB = ps.pathLength (ps.numberPaths()-1)
     print str(optimTimeGB)
     print str(pathLengthGB)
     ps.clearRoadmap ()
@@ -56,8 +65,10 @@ for i in range(0, imax):
     f.write('Cost of non-optimized path: '+str(initialPathLength)+'\n')
     f.write('Cost of optimized path (GB): '+str(pathLengthGB)+'\n')
     f.write('Cost of optimized path (RS): '+str(pathLengthRS)+'\n')
+    f.write('Cost of optimized path (PRS): '+str(pathLengthPRS)+'\n')
     f.write('Optim comptutation time (GB): '+str(optimTimeGB)+'\n')
     f.write('Optim comptutation time (RS): '+str(optimTimeRS)+'\n')
+    f.write('Optim comptutation time (PRS): '+str(optimTimePRS)+'\n')
 
 f.close()
 

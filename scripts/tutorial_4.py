@@ -36,17 +36,24 @@ f = open('results.txt','a')
 for i in range(0, imax):
     print i
     ps.solve ()
+    initialPathNumber = ps.numberPaths()-1
     initialPathLength = ps.pathLength (ps.numberPaths()-1)
     L0 = computeBaseMotion(ps.getWaypoints (ps.numberPaths()-1))
     
     ps.addPathOptimizer('RandomShortcut')
-    optimTimeRS = cl.problem.optimizePath(ps.numberPaths()-1)
+    optimTimeRS = cl.problem.optimizePath(initialPathNumber)
     pathLengthRS = ps.pathLength (ps.numberPaths()-1)
     LRS = computeBaseMotion(ps.getWaypoints (ps.numberPaths()-1))
     
     ps.clearPathOptimizers()
+    ps.addPathOptimizer('PartialShortcut')
+    optimTimePRS = cl.problem.optimizePath(initialPathNumber)
+    pathLengthPRS = ps.pathLength (ps.numberPaths()-1)
+    LPRS = computeBaseMotion(ps.getWaypoints (ps.numberPaths()-1))
+    
+    ps.clearPathOptimizers()
     ps.addPathOptimizer('GradientBased')
-    optimTimeGB = ps.optimizePath(ps.numberPaths()-2)
+    optimTimeGB = ps.optimizePath(initialPathNumber)
     pathLengthGB = ps.pathLength (ps.numberPaths()-1)
     LGB = computeBaseMotion(ps.getWaypoints (ps.numberPaths()-1))
     ps.clearRoadmap ()
@@ -57,11 +64,60 @@ for i in range(0, imax):
     f.write('Cost of non-optimized path: '+str(initialPathLength)+'\n')
     f.write('Cost of optimized path (GB): '+str(pathLengthGB)+'\n')
     f.write('Cost of optimized path (RS): '+str(pathLengthRS)+'\n')
+    f.write('Cost of optimized path (PRS): '+str(pathLengthPRS)+'\n')
     f.write('Optim comptutation time (GB): '+str(optimTimeGB)+'\n')
     f.write('Optim comptutation time (RS): '+str(optimTimeRS)+'\n')
+    f.write('Optim comptutation time (PRS): '+str(optimTimePRS)+'\n')
     f.write('base motion distance: '+str(L0)+'\n')
     f.write('base motion distance (GB): '+str(LGB)+'\n')
+    f.write('base motion distance (PRS): '+str(LPRS)+'\n')
     f.write('base motion distance (RS): '+str(LRS)+'\n')
 
 f.close()
 main()
+
+""" alpha=0.2, ORTH-CONSTR, RELEASE, PRM+DICHO, srand
+Cost of non-optimized path parsing: 
+average: 12.5535300898
+SD: 5.04654567123
+
+Cost of optimized path (GB): 
+average: 2.57493668706
+SD: 1.88992410863
+
+Cost of optimized path (RS): 
+average: 3.59607100758
+SD: 1.7304147817
+
+Cost of optimized path (PRS): 
+average: 5.31048327573
+SD: 1.34949010614
+
+Optim comptutation time (GB): 
+average: 1.27918353139
+SD: 2.12831164107
+
+Optim comptutation time (RS): 
+average: 1.92330562668
+SD: 1.28113512768
+
+Optim comptutation time (PRS): 
+average: 2.63398091658
+SD: 0.754932646746
+
+base motion distance: 
+average: 9.56526318827
+SD: 4.81092454393
+
+base motion distance (GB): 
+average: 2.17863987063e-07
+SD: 1.19224212579e-06
+
+base motion distance (RS): 
+average: 2.6280511144
+SD: 1.56191724153
+
+base motion distance (PRS): 
+average: 0.0
+SD: 0.0
+"""
