@@ -20,59 +20,103 @@ q1 = [0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0]; q2 = [0.0, 0.0, -0.8, 1.0, 0.0, 0.0, 0
 
 ps.setInitialConfig (q1); ps.addGoalConfig (q2)
 
-#ps.selectPathValidation ("Dichotomy", 0.)
+#ps.selectPathValidation ("Dichotomy", 0.)  # en fait, dicho etait actif avant ...
 ps.selectPathPlanner ("VisibilityPrmPlanner")
 
-imax=30
+imax=50; jmax = 50
 f = open('results.txt','a')
 
 for i in range(0, imax):
     print i
-    ps.solve ()
+    solveTime = ps.solve ()
     initialPathNumber = ps.numberPaths()-1
     initialPathLength = ps.pathLength (initialPathNumber)
     print "solve finished"
-    print str(initialPathLength)
+    print "solveTime= "+str(solveTime)
+    print "initialPathLength= "+str(initialPathLength)
     
-    ps.addPathOptimizer('RandomShortcut')
-    optimTimeRS = cl.problem.optimizePath(initialPathNumber)
-    pathLengthRS = ps.pathLength (ps.numberPaths()-1)
-    print "RS finished"
-    print str(optimTimeRS)
-    print str(pathLengthRS)
+    #ps.clearPathOptimizers(); ps.addPathOptimizer("Prune")
+    #ps.optimizePath (initialPathNumber)
+    #initialPathNumber = ps.numberPaths()-1
+    #initialPathLength = ps.pathLength (initialPathNumber)
     
-    ps.clearPathOptimizers()
-    ps.addPathOptimizer('PartialShortcut')
-    optimTimePRS = cl.problem.optimizePath(initialPathNumber)
-    pathLengthPRS = ps.pathLength (ps.numberPaths()-1)
-    print "PRS finished"
-    print str(optimTimePRS)
-    print str(pathLengthPRS)
-    
-    ps.clearPathOptimizers()
-    ps.addPathOptimizer('GradientBased')
-    optimTimeGB = ps.optimizePath(initialPathNumber)
+    ps.clearPathOptimizers(); ps.addPathOptimizer('GradientBased')
+    cl.problem.setAlphaInit (0.1)
+    print "start GB optimization"
+    ps.optimizePath(initialPathNumber)
     print "GB finished"
-    pathLengthGB = ps.pathLength (ps.numberPaths()-1)
+    optimTimeGB = cl.problem.getTimeGB ()
+    gainGB = (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
     print str(optimTimeGB)
-    print str(pathLengthGB)
-    ps.clearRoadmap ()
-    ps.clearPathOptimizers()
+    print str(gainGB)
+    
+    ps.clearPathOptimizers(); ps.addPathOptimizer('RandomShortcut')
+    gainRS = 0
+    for j in range(0, jmax):
+        cl.problem.optimizePath(initialPathNumber)
+        gainRS = gainRS + (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
+    gainRS = gainRS/jmax
+    print "RS finished"
+    print str(gainRS)
+    
+    ps.clearPathOptimizers(); ps.addPathOptimizer('PartialShortcut')
+    gainPRS = 0
+    for j in range(0, jmax):
+        cl.problem.optimizePath(initialPathNumber)
+        gainPRS = gainPRS + (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
+    gainPRS = gainPRS/jmax
+    print "PRS finished"
+    print str(gainPRS)+'\n'
     
     # Write important results #
     f.write('Try number: '+str(i+1)+'\n')
-    f.write('Cost of non-optimized path: '+str(initialPathLength)+'\n')
-    f.write('Cost of optimized path (GB): '+str(pathLengthGB)+'\n')
-    f.write('Cost of optimized path (RS): '+str(pathLengthRS)+'\n')
-    f.write('Cost of optimized path (PRS): '+str(pathLengthPRS)+'\n')
+    f.write('Gain (GB): '+str(gainGB)+'\n')
+    f.write('Gain (RS): '+str(gainRS)+'\n')
+    f.write('Gain (PRS): '+str(gainPRS)+'\n')
     f.write('Optim comptutation time (GB): '+str(optimTimeGB)+'\n')
-    f.write('Optim comptutation time (RS): '+str(optimTimeRS)+'\n')
-    f.write('Optim comptutation time (PRS): '+str(optimTimePRS)+'\n')
+    
+    # Give a 2nd try to GB with different alpha_init
+    ps.clearPathOptimizers(); ps.addPathOptimizer('GradientBased')
+    cl.problem.setAlphaInit (0.05)
+    ps.optimizePath(initialPathNumber)
+    print "GB finished"
+    optimTimeGB = cl.problem.getTimeGB ()
+    gainGB = (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
+    print str(optimTimeGB)
+    print str(gainGB)
+    
+    ps.clearPathOptimizers(); ps.addPathOptimizer('RandomShortcut')
+    gainRS = 0
+    for j in range(0, jmax):
+        cl.problem.optimizePath(initialPathNumber)
+        gainRS = gainRS + (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
+    gainRS = gainRS/jmax
+    print "RS finished"
+    print str(gainRS)
+    
+    ps.clearPathOptimizers(); ps.addPathOptimizer('PartialShortcut')
+    gainPRS = 0
+    for j in range(0, jmax):
+        cl.problem.optimizePath(initialPathNumber)
+        gainPRS = gainPRS + (1-(initialPathLength - ps.pathLength (ps.numberPaths()-1))/initialPathLength)*100
+    gainPRS = gainPRS/jmax
+    print "PRS finished"
+    print str(gainPRS)+'\n'
+    
+    ps.clearRoadmap (); ps.clearPathOptimizers()
+    
+    # Write important results #
+    f.write('Try number: '+str(i+1)+' with 2nd alphaInit'+'\n')
+    f.write('Gain (GB): '+str(gainGB)+'\n')
+    f.write('Gain (RS): '+str(gainRS)+'\n')
+    f.write('Gain (PRS): '+str(gainPRS)+'\n')
+    f.write('Optim comptutation time (GB): '+str(optimTimeGB)+'\n')
 
 f.close()
 
-from parseRuns import main
+from parseRunsSimple import main
 main()
+
 
 """ alpha=0.05, ORTH-CONSTR, RELEASE, PRM+Discr, srand
 Cost of non-optimized path parsing: 
@@ -131,4 +175,25 @@ SD: 0.00654571789655
 Optim comptutation time (PRS): 
 average: 0.0012983721
 SD: 0.000446801421961
+
+alpha=0.05, ORTH-CONSTR2, RELEASE, PRM+Discr, srand
+Gain (GB): 
+Number of data: 50
+average: 53.0559282501
+SD: 11.1577549108
+
+Gain (RS): 
+Number of data: 50
+average: 39.4277555072
+SD: 12.2038243776
+
+Gain (PRS): 
+Number of data: 50
+average: 46.0697522754
+SD: 14.3927107186
+
+Optim comptutation time (GB): 
+Number of data: 50
+average: 0.74200265194
+SD: 0.651077892797
 """

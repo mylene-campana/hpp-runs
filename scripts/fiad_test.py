@@ -1,35 +1,28 @@
 #/usr/bin/env python
+# Script which goes with ur_description package.
+# Load 6-DoF arm robot to test methods.
 
-import sys
+from hpp.corbaserver.ur5_with_gripper import Robot
+from hpp.corbaserver import Client
 from hpp.corbaserver import ProblemSolver
-from hpp.corbaserver.pr2 import Robot
+import sys
 
-robot = Robot ('pr2')
-robot.setJointBounds ("base_joint_xy", [-4, -3, -5, -3])
-ps = ProblemSolver (robot)
+robot = Robot ('ur5')
+ps =ProblemSolver (robot)
 cl = robot.client
-ps.loadObstacleFromUrdf ("iai_maps", "kitchen_area", "") # environment
 
-q_init = robot.getCurrentConfig ()
-q_goal = q_init [::]
-q_init [0:2] = [-3.2, -4]
-rank = robot.rankInConfiguration ['torso_lift_joint']
-q_init [rank] = 0.2
+# q = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint'] 6 DoF#
+q1 = [1.4, -0.75, 1.07, 1.2, 1.57, -0.2]; q2 = [-0.47, -1.3, 2, 0.9, 1.57, -2.7]
 
-q_goal [0:2] = [-3.2, -4]
-rank = robot.rankInConfiguration ['l_shoulder_lift_joint']
-q_goal [rank] = 0.5
-rank = robot.rankInConfiguration ['l_elbow_flex_joint']
-q_goal [rank] = -0.5
-rank = robot.rankInConfiguration ['r_shoulder_lift_joint']
-q_goal [rank] = 0.5
-rank = robot.rankInConfiguration ['r_elbow_flex_joint']
-q_goal [rank] = -0.5
-
-ps.selectPathValidation ("Dichotomy", 0.)
+#ps.selectPathValidation ("Dichotomy", 0.)
 ps.selectPathPlanner ("VisibilityPrmPlanner")
 
-ps.setInitialConfig (q_init); ps.addGoalConfig (q_goal)
+ps.setInitialConfig (q1); ps.addGoalConfig (q2)
+
+# Load obstacles in HPP #
+cl.obstacle.loadObstacleModel('ur_description','large_table','')
+cl.obstacle.loadObstacleModel('ur_description','carton','')
+cl.obstacle.loadObstacleModel('ur_description','box','')
 
 imax=50; jmax = 50
 f = open('results.txt','a')
@@ -39,11 +32,13 @@ for i in range(0, imax):
     ps.solve ()
     initialPathNumber = ps.numberPaths()-1
     initialPathLength = ps.pathLength (initialPathNumber)
+    print "nb waypoints "+str(len(ps.getWaypoints(initialPathNumber)))
     print "solve finished"
     
-    #ps.addPathOptimizer("Prune")
+    #ps.clearPathOptimizers(); ps.addPathOptimizer("Prune")
     #ps.optimizePath (initialPathNumber)
     #initialPathNumber = ps.numberPaths()-1
+    #initialPathLength = ps.pathLength (initialPathNumber)
     
     ps.clearPathOptimizers(); ps.addPathOptimizer('GradientBased')
     cl.problem.setAlphaInit (0.2)
@@ -74,7 +69,7 @@ for i in range(0, imax):
     print "PRS finished"
     print str(gainPRS)+'\n'
     
-    ps.clearRoadmap (); ps.clearPathOptimizers()
+    ps.clearRoadmap ()
     
     # Write important results #
     f.write('Try number: '+str(i+1)+'\n')
@@ -88,26 +83,29 @@ f.close()
 from parseRunsSimple import main
 main()
 
-""" alpha=0.2, ORTH-CONSTR, RELEASE, PRM+DICHO, srand  (!!35 runs only)
+
+""" alpha=0.2, ORTH-CONSTR, RELEASE, PRM+DICHO, srand
 Gain (GB): 
 Number of data: 50
-average: 28.2839330453
-SD: 14.316743963
+average: 37.4185012773
+SD: 14.2070163762
 
 Gain (RS): 
 Number of data: 50
-average: 42.6637591011
-SD: 17.1678737078
+average: 20.8318930653
+SD: 14.9240023116
 
 Gain (PRS): 
 Number of data: 50
-average: 90.6055925574
-SD: 5.65247923625
+average: 39.6049576253
+SD: 19.9721632501
 
 Optim comptutation time (GB): 
 Number of data: 50
-average: 13.4599640458
-SD: 9.10091966027
+average: 18.7245152631
+SD: 12.9752301053
+
+
+alpha=0.2, ORTH-CONSTR, RELEASE, PRM+DISCR, srand
+
 """
-
-
